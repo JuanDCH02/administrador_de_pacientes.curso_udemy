@@ -1,6 +1,15 @@
+import {useForm} from 'react-hook-form'
+import { Error } from './Error'
 
+import type { DraftPatient } from '../types'
 
 export const PacientForm = () => {
+
+    const {register, handleSubmit, formState: {errors}} = useForm<DraftPatient>()
+    const registerPacient = (data: DraftPatient) => {
+        console.log(data)
+    }
+
   return (
     <div className="md:w-1/2 lg:w-2/5 mx-5">
 
@@ -12,16 +21,25 @@ export const PacientForm = () => {
             <span className="text-indigo-700 font-bold"> y administralos</span>
         </p>
 
-        <form className="bg-white shadow-md rounded-lg py-10 px-5 mb-10" noValidate>
+        <form className="bg-white shadow-md rounded-lg py-10 px-5 mb-10" 
+        noValidate 
+        onSubmit={handleSubmit(registerPacient)} 
+        >
             <div className="mb-5">
                 <label 
                     htmlFor="name"
                     className="text-sm uppercase font-bold"
                     >Paciente
-
                 </label>
                 <input className="w-full p-3  border border-gray-200" 
-                    id="name" type="text" placeholder="nombre del paciente" />
+                    id="name" type="text" placeholder="nombre del paciente" 
+                    {...register('name', { // valido que haya algo en el input
+                        required: 'el nombre del paciente es obligatorio'
+                    })}
+                />
+                {errors.name && ( //muestro si hay algun error
+                    <Error>{errors.name?.message}</Error>
+                )}
             </div>
 
             <div className="mb-5">
@@ -29,10 +47,16 @@ export const PacientForm = () => {
                     htmlFor="caretaker"
                     className="text-sm uppercase font-bold"
                     >Propietario
-
                 </label>
                 <input className="w-full p-3  border border-gray-200" 
-                    id="caretaker" type="text" placeholder="nombre del propietario"/>
+                    id="caretaker" type="text" placeholder="nombre del propietario"
+                    {...register('caretaker', { // valido que haya algo en el input
+                        required: 'el propietario es obligatorio'
+                    })}
+                />
+                {errors.caretaker && ( //muestro si hay algun error
+                    <Error>{errors.caretaker?.message}</Error>
+                )}
             </div>
 
             <div className="mb-5">
@@ -40,10 +64,21 @@ export const PacientForm = () => {
                     htmlFor="email"
                     className="text-sm uppercase font-bold"
                     >Email
-
                 </label>
                 <input className="w-full p-3  border border-gray-200" 
-                    id="email" type="text" placeholder="email de registro"/>
+                    id="email" type="text" placeholder="email de registro"
+                    {...register("email", {
+                        required: "el email es obligatorio",
+                        pattern: {
+                            //regex para validar el email
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: 'email no valido'
+                        }
+                      })} 
+                />
+                {errors.email && ( //muestro si hay algun error
+                    <Error>{errors.email?.message}</Error>
+                )}
             </div>
 
             <div className="mb-5">
@@ -51,10 +86,16 @@ export const PacientForm = () => {
                     htmlFor="date"
                     className="text-sm uppercase font-bold"
                     >Alta fecha
-
                 </label>
                 <input className="w-full p-3  border border-gray-200" 
-                    id="date" type="date" />
+                    id="date" type="date" 
+                    {...register('date', { // valido que haya algo en el input
+                        required: 'la fecha es obligatorio'
+                    })}
+                />
+                {errors.date && ( //muestro si hay algun error
+                    <Error>{errors.date?.message}</Error>
+                )}
             </div>
 
             <div className="mb-5">
@@ -62,11 +103,16 @@ export const PacientForm = () => {
                     htmlFor="symptoms"
                     className="text-sm uppercase font-bold"
                     >Sintomas
-
                 </label>
                 <textarea className=" w-full p-3 border border-gray-200"
                     id="symptoms" placeholder="sintomas del paciente"
-                ></textarea>
+                    {...register('symptoms', { // valido que haya algo en el input
+                        required: 'los sintomas es obligatorio'
+                    })}
+                />
+                {errors.symptoms && ( //muestro si hay algun error
+                    <Error>{errors.symptoms?.message}</Error>
+                )}
             </div>
 
             <input type="submit"
