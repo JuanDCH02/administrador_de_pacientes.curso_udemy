@@ -1,5 +1,6 @@
 import {useForm} from 'react-hook-form'
 import { useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { Error } from './Error'
 import { usePatientStore } from '../store'
 
@@ -9,11 +10,20 @@ export const PacientForm = () => {
 
     const {addPatient, activeId, patients, updatePatient} = usePatientStore()
     const {register, setValue, handleSubmit, formState: {errors}, reset} = useForm<DraftPatient>()
+
     const registerPacient = (data: DraftPatient) => {
-        //si existe un id activo, entonces actualizo el paciente
-        if(activeId) updatePatient(data)
-        //si no existe un id activo, entonces agrego el paciente
-        else addPatient(data)
+        
+        if(activeId) {
+            //si existe un id activo, entonces actualizo el paciente
+            updatePatient(data)
+            toast('Paciente Actualizado',
+                {type: 'info', position:'top-center'})}
+        
+        else {
+            //si no existe un id activo, entonces agrego el paciente
+            addPatient(data)
+            toast('Paciente Registrado',
+                {type: 'success', position:'top-center'})}
         //vacio los inputs
         reset()
     }
