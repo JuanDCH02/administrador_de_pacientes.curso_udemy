@@ -1,4 +1,5 @@
 import {useForm} from 'react-hook-form'
+import { useEffect } from 'react'
 import { Error } from './Error'
 import { usePatientStore } from '../store'
 
@@ -6,11 +7,31 @@ import type { DraftPatient } from '../types'
 
 export const PacientForm = () => {
 
-    const {addPatient} = usePatientStore()
-    const {register, handleSubmit, formState: {errors}} = useForm<DraftPatient>()
+    const {addPatient, activeId, patients, updatePatient} = usePatientStore()
+    const {register, setValue, handleSubmit, formState: {errors}, reset} = useForm<DraftPatient>()
     const registerPacient = (data: DraftPatient) => {
-        addPatient(data)
+        //si existe un id activo, entonces actualizo el paciente
+        if(activeId) updatePatient(data)
+        //si no existe un id activo, entonces agrego el paciente
+        else addPatient(data)
+        //vacio los inputs
+        reset()
     }
+    useEffect(() => {
+        //si se presiona el boton de editar se activa un id
+        if(activeId){
+            //busco el paciente activo
+            const activePatient = patients.find(patient => patient.id === activeId)
+            if(activePatient){
+                //si existe, entonces seteo los valores de los inputs
+                setValue('name', activePatient.name)
+                setValue('caretaker', activePatient.caretaker)
+                setValue('email', activePatient.email)
+                setValue('date', activePatient.date)
+                setValue('symptoms', activePatient.symptoms)
+            }
+        }
+    }, [activeId, patients, setValue])
 
   return (
     <div className="md:w-1/2 lg:w-2/5 mx-5">
@@ -33,7 +54,7 @@ export const PacientForm = () => {
                     className="text-sm uppercase font-bold"
                     >Paciente
                 </label>
-                <input className="w-full p-3  border border-gray-200" 
+                <input className="w-full p-3 border border-gray-200" 
                     id="name" type="text" placeholder="nombre del paciente" 
                     {...register('name', { // valido que haya algo en el input
                         required: 'el nombre del paciente es obligatorio'
@@ -120,7 +141,8 @@ export const PacientForm = () => {
             <input type="submit"
                 className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 
                 cursor-pointer transition-colors"
-                value={'guardar-paciente'} 
+                //si existe un id activo, entonces muestro el texto de editar paciente
+                value={activeId? 'Editar Paciente' : 'Guardar Paciente'} 
             />
 
         </form>
