@@ -35,7 +35,7 @@ export const PatientDetail = ({patient} : PatientDetailprops) => {
           <button className="py-2 px-10 bg-red-600 hover:bg-red-700 uppercase
            text-white font-bold rounded-lg"
            type="button"
-           onClick={() => handleDelete}
+           onClick={() => handleDelete()}
             >Eliminar
           </button>
         </div>
